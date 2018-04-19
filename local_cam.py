@@ -89,7 +89,7 @@ def main():
             cv2.imshow('Face Image for Classification', frame)
             
             # Keep showing image until a key is pressed
-            cv2.waitKey()
+            cv2.waitKey(10)
             answer = input('Confirm image (1-yes / 0-no): ')
             print '=================================='
 
@@ -107,7 +107,7 @@ def main():
                 # [OPTIONAL]: At this point you only have a number to display, 
                 # you could add some extra code to convert your number to a 
                 # name
-		result_to_display = prediction['label']
+                result_to_display = str(prediction['label']) + ' conf: ' +  str(prediction['conf'])
 
                 cv2.putText(frame, str(result_to_display), (10, 30), FONT, 1, (0, 255, 0), 2)
                 cv2.imshow('Face Image for Classification', frame)
