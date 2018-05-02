@@ -32,11 +32,7 @@ NUM_CLASSES = 19
 
 
 def load_model():
-    # TODO: use VGG16 to load lower layers of vgg16 network and declare it as base_model
-    # TODO: use 'imagenet' for weights, include_top=False, (IMG_H, IMG_W, NUM_CHANNELS) for input_shape
-
-    print('Model weights loaded.')
-    base_out = base_model.output
+    
     # TODO: add a flatten layer, a dense layer with 256 units, a dropout layer with 0.5 rate,
     # TODO: and another dense layer for output. The final layer should have the same number of units as classes
 
@@ -45,8 +41,6 @@ def load_model():
     print('Model weights loaded.')
     base_out = base_model.output
 
-    # TODO: add a flatten layer, a dense layer with 256 units, a dropout layer with 0.5 rate,
-    # TODO: and another dense layer for output. The final layer should have the same number of units as classes
     base_model.add(Flatten())
     base_model.add(Dense(256))
     base_model.add(Dropout(0.5))
