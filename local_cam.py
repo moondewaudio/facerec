@@ -17,7 +17,7 @@ from picamera.array import PiRGBArray
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 # TODO: Declare path to face cascade
-CASCADE_PATH = ""
+CASCADE_PATH = "/home/pi/opencv-2.4.13.6/data/haarcascades/haarcascade_frontalface_default.xml"
     
 def request_from_server(img):
     """ 
@@ -27,12 +27,13 @@ def request_from_server(img):
     :returns: Returns a dictionary containing label and cofidence.
     """
     # URL or PUBLIC DNS to your server
-    URL = ""
+    URL = "http://18.237.78.227:8080/predict"
     
     # File name so that it can be temporarily stored.
     temp_image_name = 'temp.jpg'
     
     # TODO: Save image with name stored in 'temp_image_name'
+    cv2.imwrite(temp_image_name, img)
     
 
     # Reopen image and encode in base64
@@ -55,6 +56,7 @@ def request_from_server(img):
 def main():
     # 1. Start running the camera.
     # TODO: Initialize face detector
+    face_cascade = cv2.CascadeClassifier(CASCADE_PATH)
     
     
     # Initialize camera and update parameters
@@ -79,6 +81,7 @@ def main():
 
         # TODO: Use face detector to get faces.
         # Be sure to save the faces in a variable called 'faces'
+	faces = face_cascade.detectMultiScale(img, 1.3, 5)
 
         for (x, y, w, h) in faces:
             print '=================================='
@@ -94,6 +97,7 @@ def main():
                 print 'Let\'s see who you are...'
                 
                 # TODO: Get label and confidence using request_from_server
+		prediction = request_from_server(img) 
                 
                 
                 print 'New result found!'
@@ -103,6 +107,7 @@ def main():
                 # [OPTIONAL]: At this point you only have a number to display, 
                 # you could add some extra code to convert your number to a 
                 # name
+		result_to_display = prediction['label']
 
                 cv2.putText(frame, str(result_to_display), (10, 30), FONT, 1, (0, 255, 0), 2)
                 cv2.imshow('Face Image for Classification', frame)

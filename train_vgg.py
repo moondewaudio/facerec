@@ -15,6 +15,7 @@ from keras import optimizers
 from keras.layers import Dropout, Flatten, Dense
 from keras.utils.np_utils import to_categorical
 from keras import metrics
+
 import numpy as np
 import glob
 import os
@@ -33,6 +34,12 @@ NUM_CLASSES = 19
 def load_model():
     # TODO: use VGG16 to load lower layers of vgg16 network and declare it as base_model
     # TODO: use 'imagenet' for weights, include_top=False, (IMG_H, IMG_W, NUM_CHANNELS) for input_shape
+
+    print('Model weights loaded.')
+    base_out = base_model.output
+    # TODO: add a flatten layer, a dense layer with 256 units, a dropout layer with 0.5 rate,
+    # TODO: and another dense layer for output. The final layer should have the same number of units as classes
+
     base_model = VGG16(include_top=False, weights = 'imagenet', input_shape = (IMG_H, IMG_W, NUM_CHANNELS))
     
     print('Model weights loaded.')
@@ -51,6 +58,7 @@ def load_model():
 
     # TODO: compile the model, use SGD(lr=1e-4,momentum=0.9) for optimizer, 'categorical_crossentropy' for loss,
     # TODO: and ['accuracy'] for metrics
+
     sgd = optimizers.SGD(lr=1e-4,momentum=0.9)
     model.compile(loss = 'categorical_crossentropy', optimizer = sgd, metrics = ['accuracy'])
     
@@ -94,10 +102,13 @@ def main():
     print 'Load val data:'
     X_val, Y_val = load_data(VAL_DIR)
     # TODO: Train model
+
+
+
     model.fit(X_train, Y_train, batch_size = BATCH_SIZE, epochs = NUM_EPOCHS, validation_data=(X_val,Y_val))
 
     # TODO: Save model weights
-    model.save_weights('./weights.h5')
+    model.save('./model.h5')
     
     print 'model weights saved.'
     return

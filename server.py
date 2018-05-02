@@ -13,11 +13,16 @@ What this script should do:
 import cv2
 import numpy as np
 from keras.models import load_model
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, g
 
 app = Flask(__name__)
 
 # TODO: Read saved weights and name it 'model'
+def get_model():
+    model = getattr(g, 'model', None)
+    if model is None:
+        model = g.model = load_model('model.h5')
+    return model
 
 def classify(path_to_image):
     """
@@ -33,15 +38,22 @@ def classify(path_to_image):
     mean_pixel = np.array([104., 117., 123.]).reshape((1, 1, 3))
 
     # TODO: Use opencv to read and resize image to standard dimensions
-
+    img = cv2.imread(path_to_image)
+    img = cv2.resize(img, (img_width,img_height))
     
     # TODO: Subtract mean_pixel from the image store the new image in 
     # a variable called 'normalized_image'
-     
+    normalized_image = img - mean_pixel
+
+    
     
     # Turns image shape of (2,) to (1,2)
     image_to_be_classified = np.expand_dims(normalized_image, axis=0)
 
+    model = get_model()
+    # TODO: Use network to predict the 'image_to_be_classified' and
+    # get an array of prediction values
+    prediction_vals = model.predict(image_to_be_classified)
     # TODO: Use network to predict the 'image_to_be_classified' and
     # get an array of prediction values
     
@@ -50,11 +62,13 @@ def classify(path_to_image):
     # Label = the index of the largest value in the prediction array
     # This label is a number, which corresponds to the same number you 
     # give to the folder when you organized data
+    label = np.argmax(prediction_vals)
     
     
     # TODO: Calculate confidence according to the following metric:
     # Confidence = prediction_value / sum(all_prediction_values)
     # Be sure to call your confidence value 'conf'
+    conf = prediction_vals[label] / np.sum(prediction_vals)
     
     prediction = {'label': label,
                   'confidence': conf}
@@ -89,7 +103,7 @@ def predict():
         
 def main():
     # Starts the webserver
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080, threaded = False)
 
 # Runs the main function if this file is run directly
 if __name__ == "__main__":
