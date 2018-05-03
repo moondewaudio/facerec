@@ -53,7 +53,7 @@ def classify(path_to_image):
     model = get_model()
     # TODO: Use network to predict the 'image_to_be_classified' and
     # get an array of prediction values
-    prediction_vals = model.predict(image_to_be_classified)
+    prediction_vals = model.predict(image_to_be_classified)[0]
     # TODO: Use network to predict the 'image_to_be_classified' and
     # get an array of prediction values
     
@@ -71,7 +71,7 @@ def classify(path_to_image):
     conf = prediction_vals[label] / np.sum(prediction_vals)
     
     prediction = {'label': label,
-                  'confidence': conf}
+                  'conf': float(conf)}
 
     return prediction
 
